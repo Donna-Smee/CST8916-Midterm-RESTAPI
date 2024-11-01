@@ -37,7 +37,7 @@ function getStudent(req, res, next){
       return;
     }
   }
-  res.send(null);
+  res.status(404).send(null);
 }
 
 // chatgpt
