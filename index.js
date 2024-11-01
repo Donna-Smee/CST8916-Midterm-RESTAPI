@@ -37,22 +37,25 @@ function getStudent(req, res, next){
       return;
     }
   }
-  res.send({});
+  res.send(null);
 }
 
 // chatgpt
 // POST /students: Add a new student
 app.post('/students', (req, res) => {
-  const { ID, Name, Grade, Email } = req.body;
+  const { Name, Grade, Email } = req.body;
 
   // Validate required fields
-  if (!ID || !Name || !Grade || !Email) {
-      return res.status(400).json({ error: 'Please provide ID, Name, Grade, and Email.' });
+  if (!Name || !Grade || !Email) {
+      return res.status(400).json({ error: 'Please provide Name, Grade, and Email.' });
   }
+
+  // Generate a unique ID
+  const ID = students.length ? students[students.length - 1].ID + 1 : 1;
 
   // Create a new student object
   const newStudent = {
-      ID: parseInt(ID),
+      ID,
       Name,
       Grade,
       Email
@@ -94,6 +97,17 @@ app.delete('/students/:id', (req, res) => {
   // Remove the student from the array
   const deletedStudent = students.splice(studentIndex, 1);
   res.json(deletedStudent[0]);
+});
+
+// GET /students/:id: Retrieve a student by ID
+app.get('/students/:id', (req, res) => {
+  const studentId = parseInt(req.params.id);
+  const student = students.find(s => s.ID === studentId);
+  if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+  }
+
+  res.json(student);
 });
 
 app.listen(PORT, () => {
